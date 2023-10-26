@@ -187,7 +187,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 var versionInfoJsonStaging = await client.GetAsync(REMOTE_VERSION + GetBetaTrackName(settings)).ConfigureAwait(false);
 
-                if (versionInfoJsonStaging.StatusCode != HttpStatusCode.BadRequest)
+                if (versionInfoJsonStaging.StatusCode == HttpStatusCode.OK)
                     versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(await versionInfoJsonStaging.Content.ReadAsStringAsync().ConfigureAwait(false));
             }
 
