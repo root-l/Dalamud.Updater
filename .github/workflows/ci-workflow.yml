@@ -30,13 +30,16 @@ jobs:
         run: |
           cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\"
            .\MSBuild.exe $Env:GITHUB_WORKSPACE\Dalamud.Updater.sln /t:Build /p:Configuration=Release
-
       - name: Create package
         shell: pwsh
         run: |
           Write-Host "Create Zip package"
-          Compress-Archive -Force Dalamud.Updater\bin\Release\net48\Dalamud.Updater.exe .\release.zip  # Recreate the release zip
-    
+          Compress-Archive -Force Dalamud.Updater\bin\Release\net48\Dalamud.Updater.exe .\release.zip 
+      - name: Hash
+        id: hash
+        run: |
+          $HASH = (Get-FileHash .\release.zip -Algorithm MD5).Hash
+          "HASH=$HASH" >> $env:GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -45,7 +48,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: ""
+          body: "Hash: ${{ steps.hash.outputs.HASH }}"
           prerelease: true
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -54,7 +57,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./release.zip
-          asset_name: release.zip
+          asset_name: Dalamud.Updater.zip
           asset_content_type: application/zip
   build:
     name: Build on Windows

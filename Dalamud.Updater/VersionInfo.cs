@@ -13,5 +13,6 @@ namespace Dalamud.Updater
         public string DownloadUrl;
         public string ChangeLog;
         public Config Config;
+        public string Hash;
     }
 }

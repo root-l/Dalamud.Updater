@@ -356,6 +356,15 @@ namespace Dalamud.Updater
                             ChangelogURL = json.ChangeLog,
                             DownloadURL = json.DownloadUrl,
                         };
+
+                        if (json.Hash != null)
+                        {
+                            args.UpdateInfo.CheckSum = new CheckSum
+                            {
+                                Value = json.Hash,
+                            };
+                        }
+
                         if (json.Config != null && this.config != null)
                         {
                             var type = typeof(Config);
