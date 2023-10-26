@@ -246,11 +246,8 @@ namespace Dalamud.Updater
                         //    return !process.MainWindowTitle.Contains("FINAL FANTASY XIV");
                         //}).ToList().ConvertAll(process => process.Id.ToString()).ToArray();
                         //为什么我开了FF检测不到啊.jpg
-                        var newPidList = Process.GetProcesses().Where(process =>
-                        {
-                            var isFfxivProcess = process.ProcessName == "ffxiv_dx11" || process.ProcessName == "ffxiv";
-                            var isSdoClient = !process.MainWindowTitle.Contains("FINAL FANTASY XIV");
-                            return isFfxivProcess && isSdoClient;
+                        var newPidList = Process.GetProcesses().Where(process =>{
+                            return process.ProcessName == "ffxiv_dx11" || process.ProcessName == "ffxiv";
                         }).ToList().ConvertAll(process => process.Id.ToString()).ToArray();
                         var newHash = String.Join(", ", newPidList).GetHashCode();
                         var oldPidList = this.comboBoxFFXIV.Items.Cast<Object>().Select(item => item.ToString()).ToArray();
