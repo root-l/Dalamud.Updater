@@ -579,13 +579,33 @@ namespace Dalamud.Updater
             Log.Information($"[Updater] dalamudUpdater.State:{dalamudUpdater.State}");
             if (dalamudUpdater.State == DalamudUpdater.DownloadState.NoIntegrity)
             {
-                if (MessageBox.Show("현재 달라가브 버전이 게임과 호환되지 않을 수 있습니다. 그래도 적용하시겠습니까?", windowsTitle, MessageBoxButtons.YesNo) != DialogResult.Yes)
+                if (MessageBox.Show("현재 달라가브 업데이트가 확인되지 않았습니다. 그래도 적용하시겠습니까?", windowsTitle, MessageBoxButtons.YesNo) != DialogResult.Yes)
                 {
                     return false;
                 }
             }
             //return false;
-            var dalamudStartInfo = GeneratingDalamudStartInfo(process, Directory.GetParent(dalamudUpdater.Runner.FullName).FullName, injectDelay);
+
+            var dalamudPath = Directory.GetParent(dalamudUpdater.Runner.FullName).FullName;
+            var dalamudStartInfo = GeneratingDalamudStartInfo(process, dalamudPath, injectDelay);
+            var dalamudVersionFile = new FileInfo(Path.Combine(dalamudPath, "version.json"));
+            if (!dalamudVersionFile.Exists)
+            {
+                if (MessageBox.Show("현재 달라가브 버전을 확인할 수 없습니다.\n그래도 적용하시겠습니까?", windowsTitle, MessageBoxButtons.YesNo) != DialogResult.Yes)
+                {
+                    return false;
+                }
+            }
+
+            var dalamudVersionInfo = DalamudVersionInfo.Load(dalamudVersionFile);
+            if (dalamudVersionInfo.SupportedGameVer != dalamudStartInfo.GameVersion)
+            {
+                if (MessageBox.Show("현재 달라가브 버전이 게임과 호환되지 않을 수 있습니다.\n그래도 적용하시겠습니까?", windowsTitle, MessageBoxButtons.YesNo) != DialogResult.Yes)
+                {
+                    return false;
+                }
+            }
+
             var environment = new Dictionary<string, string>();
             // No use cuz we're injecting instead of launching, the Dalamud.Boot.dll is reading environment variables from ffxiv_dx11.exe
             /*
