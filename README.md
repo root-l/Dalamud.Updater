@@ -1,3 +1,3 @@
-# Dalamud Updater
+# Dalamud Updater KR
 
-An easy-to-use Dalamud update and injection tool. Only for CN clients. Powered by Ottercorp.
+An easy-to-use Dalamud update and injection tool. Only for FFXIV KR clients. Powered by Ottercorp.

@@ -47,10 +47,10 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DirectoryInfo assetDirectory;
         private readonly DirectoryInfo configDirectory;
         //private readonly IUniqueIdCache? cache;
-        public const string REMOTE_BASE = "https://aonyx.ffxiv.wang/";
-        public const string REMOTE_VERSION = REMOTE_BASE + "Dalamud/Release/VersionInfo?track=";
-        public const string REMOTE_DOTNET = REMOTE_BASE + "Dalamud/Release/Runtime/DotNet/{0}";
-        public const string REMOTE_DESKTOP = REMOTE_BASE + "Dalamud/Release/Runtime/WindowsDesktop/{0}";
+        public const string REMOTE_BASE = "https://raw.githubusercontent.com/dohwacorp/DalamudResource/";
+        public const string REMOTE_VERSION = REMOTE_BASE + "main/VersionInfo_";
+        public const string REMOTE_DOTNET = REMOTE_BASE + "main/dotnet-runtime-{0}-win-x64.zip";
+        public const string REMOTE_DESKTOP = REMOTE_BASE + "main/windowsdesktop-runtime-{0}-win-x64.zip";
         private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(25);
         private static string onlineHash = string.Empty;
 
@@ -256,7 +256,7 @@ namespace XIVLauncher.Common.Dalamud
                 Log.Information("[DUPDATE] Now starting for .NET Runtime {0}", remoteVersionInfo.RuntimeVersion);
 
                 var versionFile = new FileInfo(Path.Combine(this.runtimeDirectory.FullName, "version"));
-                var localVersion = "5.0.6"; // This is the version we first shipped. We didn't write out a version file, so we can't check it.
+                var localVersion = "7.0.0"; // This is the version we first shipped. We didn't write out a version file, so we can't check it.
                 if (versionFile.Exists)
                     localVersion = File.ReadAllText(versionFile.FullName);
 

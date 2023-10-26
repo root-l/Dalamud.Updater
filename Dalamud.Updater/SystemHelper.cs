@@ -12,11 +12,11 @@ namespace Dalamud.Updater
     {
         private SystemHelper() { }
         /// <summary>
-            /// 设置程序开机启动
+            /// Program Launch Settings
             /// </summary>
-            /// <param name="strAppPath">应用程序exe所在文件夹</param>
-            /// <param name="strAppName">应用程序exe名称</param>
-            /// <param name="bIsAutoRun">自动运行状态</param>
+            /// <param name="strAppPath">Path of app exe resides</param>
+            /// <param name="strAppName">Name of app exe</param>
+            /// <param name="bIsAutoRun">AutoRun</param>
         public static void SetAutoRun(string strAppPath, string strAppName, bool bIsAutoRun)
         {
             try
@@ -24,7 +24,7 @@ namespace Dalamud.Updater
                 if (string.IsNullOrWhiteSpace(strAppPath)
                 || string.IsNullOrWhiteSpace(strAppName))
                 {
-                    throw new Exception("应用程序路径或名称为空！");
+                    throw new Exception("Application path or name is empty");
                 }
                 RegistryKey reg = Registry.CurrentUser;
                 RegistryKey run = reg.CreateSubKey(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\");
@@ -48,10 +48,10 @@ namespace Dalamud.Updater
             }
         }
         /// <summary>
-            /// 判断是否开机启动
+            /// determine whether to boot or not
             /// </summary>
-            /// <param name="strAppPath">应用程序路径</param>
-            /// <param name="strAppName">应用程序名称</param>
+            /// <param name="strAppPath">App Path</param>
+            /// <param name="strAppName">App Name</param>
             /// <returns></returns>
         public static bool IsAutoRun(string strAppPath, string strAppName)
         {

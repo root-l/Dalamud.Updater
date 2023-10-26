@@ -38,21 +38,21 @@ namespace Dalamud.Updater
         {
             switch (progress)
             {
-                // 文本太长会一个字都不显示
+                // If text is too long, It won't show.
                 case IDalamudLoadingOverlay.DalamudUpdateStep.Dalamud:
-                    OnStatusLabel?.Invoke("正在更新核心");
+                    OnStatusLabel?.Invoke("Update - Dalamud");
                     break;
 
                 case IDalamudLoadingOverlay.DalamudUpdateStep.Assets:
-                    OnStatusLabel?.Invoke("正在更新资源");
+                    OnStatusLabel?.Invoke("Update - Assets");
                     break;
 
                 case IDalamudLoadingOverlay.DalamudUpdateStep.Runtime:
-                    OnStatusLabel?.Invoke("正在更新运行库");
+                    OnStatusLabel?.Invoke("Update - Runtime");
                     break;
 
                 case IDalamudLoadingOverlay.DalamudUpdateStep.Unavailable:
-                    OnStatusLabel?.Invoke("暂时无法使用");
+                    OnStatusLabel?.Invoke("Update Unavailable.");
                     break;
 
                 default:

@@ -19,15 +19,8 @@ namespace Dalamud.Updater
 {
     public partial class FormMain : Form
     {
-        private const string UPDATEURL = "https://aonyx.ffxiv.wang/Updater/Release/VersionInfo";
-        private const string OTTERHOME = """
-            如需帮助或者反馈,请前往:
-            https://file.bluefissure.com/FFXIV/Dalamud
-            https://github.com/ottercorp/Dalamud.Updater
-            https://aonyx.ffxiv.wang/
-            QQ频道:https://pd.qq.com/s/9ehyfcha3
-            QQ频道:https://pd.ottercorp.net
-            """;
+        private const string UPDATEURL = "https://raw.githubusercontent.com/dohwacorp/DalamudResource/main/UpdaterVersionInfo";
+        private const string OTTERHOME = "문의 : 달라가브 KR 디스코드 https://discord.gg/Fdb9TTW9aD";
 
         // private List<string> pidList = new List<string>();
         private bool firstHideHint = true;
@@ -45,7 +38,7 @@ namespace Dalamud.Updater
 
         private readonly DalamudUpdater dalamudUpdater;
 
-        public string windowsTitle = "獭纪委 v" + Assembly.GetExecutingAssembly().GetName().Version;
+        public string windowsTitle = "Dalamud Updater KR v" + Assembly.GetExecutingAssembly().GetName().Version;
 
         private void CheckUpdate()
         {
@@ -114,7 +107,7 @@ namespace Dalamud.Updater
                 if (firstHideHint)
                 {
                     firstHideHint = false;
-                    this.DalamudUpdaterIcon.ShowBalloonTip(2000, "自启动成功", "放心，我会在后台偷偷干活的。", ToolTipIcon.Info);
+                    this.DalamudUpdaterIcon.ShowBalloonTip(2000, "자동 시작", "백그라운드에서 자동으로 시작했습니다.", ToolTipIcon.Info);
                 }
             }
             dalamudUpdater = new DalamudUpdater(addonDirectory, runtimeDirectory, assetDirectory, configDirectory);
@@ -135,28 +128,28 @@ namespace Dalamud.Updater
             switch (value)
             {
                 case DalamudUpdater.DownloadState.Failed:
-                    MessageBox.Show("更新Dalamud失败", windowsTitle, MessageBoxButtons.YesNo);
-                    setStatus("更新Dalamud失败");
+                    MessageBox.Show("Failed Update Dalamud", windowsTitle);
+                    setStatus("Failed Update Dalamud");
                     break;
                 case DalamudUpdater.DownloadState.Unknown:
-                    setStatus("未知错误");
+                    setStatus("Unknown Error");
                     break;
                 case DalamudUpdater.DownloadState.NoIntegrity:
-                    setStatus("卫月与游戏不兼容");
+                    setStatus("Version Imcompatible");
                     break;
                 case DalamudUpdater.DownloadState.Done:
                     SetDalamudVersion();
-                    setStatus("更新成功");
+                    setStatus("Success Update Dalamud");
                     break;
                 case DalamudUpdater.DownloadState.Checking:
-                    setStatus("检查更新中...");
+                    setStatus("Checking Update...");
                     break;
             }
         }
 
         public void SetDalamudVersion()
         {
-            var verStr = string.Format("卫月版本 : {0}", getVersion());
+            var verStr = string.Format("Dalamud KR : {0}", getVersion());
             if (this.labelVersion.InvokeRequired)
             {
                 Action<string> actionDelegate = (x) => { labelVersion.Text = x; };
@@ -277,13 +270,13 @@ namespace Dalamud.Updater
                                     var pid = int.Parse(pidStr);
                                     if (Process.GetProcessById(pid).ProcessName != "ffxiv_dx11")
                                     {
-                                        this.DalamudUpdaterIcon.ShowBalloonTip(2000, "找不到游戏", $"进程{pid}不是dx11版FF。", ToolTipIcon.Warning); 
+                                        this.DalamudUpdaterIcon.ShowBalloonTip(2000, "자동 적용 실패", $"Process ID : {pid}는 DirectX11 버전이 아닙니다.", ToolTipIcon.Warning);
                                         Log.Information("{pid} is not dx11", pid);
                                         continue;
                                     }
                                     if (this.Inject(pid, (int)(this.config.InjectDelaySeconds * 1000)))
                                     {
-                                        this.DalamudUpdaterIcon.ShowBalloonTip(2000, "帮你注入了", $"帮你注入了进程{pid}，不用谢。", ToolTipIcon.Info);
+                                        this.DalamudUpdaterIcon.ShowBalloonTip(2000, "자동 적용", $"Process ID : {pid}, 적용 완료.", ToolTipIcon.Info);
                                     }
                                 }
                             }
@@ -335,7 +328,7 @@ namespace Dalamud.Updater
                     try
                     {
 #if DEBUG
-                        var json = JsonConvert.DeserializeObject<VersionInfo>(File.ReadAllText(@"D:\Code\ottercorp\version.txt"), new JsonSerializerSettings
+                        var json = JsonConvert.DeserializeObject<VersionInfo>(File.ReadAllText(@"version.json"), new JsonSerializerSettings
                         {
                             TypeNameHandling = TypeNameHandling.All,
                             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
@@ -354,10 +347,9 @@ namespace Dalamud.Updater
 #endif
                         if (json.Version == null || json.DownloadUrl == null)
                         {
-                            throw new Exception($"远程版本配置文件错误:\n {args.RemoteData}");
+                            throw new Exception($"업데이트 정보 확인 실패:\n {args.RemoteData}");
                         }
 
-                        json.ChangeLog ??= "https://bbs.tggfl.com/topic/32/dalamud-%E5%8D%AB%E6%9C%88%E6%A1%86%E6%9E%B6";
                         args.UpdateInfo = new UpdateInfoEventArgs
                         {
                             CurrentVersion = json.Version,
@@ -382,7 +374,7 @@ namespace Dalamud.Updater
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"{ex.Message}\n{OTTERHOME}", "程序启动版本检查失败",
+                        MessageBox.Show($"{ex.Message}\n\n{OTTERHOME}", "업데이트 실패",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
                     }
@@ -392,7 +384,7 @@ namespace Dalamud.Updater
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{ex.Message}\n{OTTERHOME}", "程序启动版本检查失败",
+                MessageBox.Show($"{ex.Message}\n\n{OTTERHOME}", "업데이트 실패",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -415,7 +407,7 @@ namespace Dalamud.Updater
             if (firstHideHint)
             {
                 firstHideHint = false;
-                this.DalamudUpdaterIcon.ShowBalloonTip(2000, "小玩意挺会藏", "哎我藏起来了，单击托盘图标呼出程序界面。", ToolTipIcon.Info);
+                this.DalamudUpdaterIcon.ShowBalloonTip(2000, "달라가브 최소화", "트레이 아이콘을 눌러 메뉴를 열 수 있습니다.", ToolTipIcon.Info);
             }
         }
 
@@ -438,13 +430,13 @@ namespace Dalamud.Updater
             }
         }
 
-        private void 显示ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void MenuToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //WindowState = FormWindowState.Normal;
             if (!this.Visible) this.Visible = true;
             this.Activate();
         }
-        private void 退出ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Dispose();
             //this.Close();
@@ -460,7 +452,7 @@ namespace Dalamud.Updater
                 var process = Process.GetProcessById(pid);
                 if (isInjected(process))
                 {
-                    var choice = MessageBox.Show("经检测存在 ffxiv_dx11.exe 进程，更新卫月需要关闭游戏，需要帮您代劳吗？", "关闭游戏",
+                    var choice = MessageBox.Show("이미 달라가브가 적용되어있습니다.\n업데이트 확인을 위해서 게임을 종료하시겠습니까?", windowsTitle,
                                     MessageBoxButtons.YesNo,
                                     MessageBoxIcon.Information);
                     if (choice == DialogResult.Yes)
@@ -483,7 +475,7 @@ namespace Dalamud.Updater
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=CZtWN&from=181074&biz=ka&shareSource=5");
+            Process.Start("https://discord.gg/Fdb9TTW9aD");
         }
 
         private DalamudStartInfo GeneratingDalamudStartInfo(Process process, string dalamudPath, int injectDelay)
@@ -544,10 +536,10 @@ namespace Dalamud.Updater
             catch (Exception ex)
             {
                 MessageBox.Show("""
-                    无法访问/打开进程
-                    1.请检查安全软件，将Dalamud程序以及相关目录加入白名单
-                    2.打开任务管理器，检查是否存在未完全退出且无响应的FFXIV进程,并尝试结束
-                    3.尝试重启电脑
+                    프로세스에 액세스 할 수 없습니다.
+                    1. 보안 프로그램을 확인하고 Dalamud 프로그램을 제외해주세요.
+                    2. 작업 관리자를 열고 완전히 종료되지 않거나 응답하지 않는 FFXIV 프로세스를 종료해주세요.
+                    3. 컴퓨터를 다시 시작해 보세요.
 
                     """ + ex.Message, windowsTitle, MessageBoxButtons.YesNo);
                 return true;
@@ -561,11 +553,8 @@ namespace Dalamud.Updater
             if (process.ProcessName != "ffxiv_dx11")
             {
                 Log.Error("{pid} is not dx11", pid);
-                if (MessageBox.Show("此进程并非dx11版FFXIV,无法使用Dalamud。\n解决方法:\n点击确定使用浏览器查看 https://www.yuque.com/ffcafe/act/dx11", windowsTitle, MessageBoxButtons.YesNo) != DialogResult.Yes)
-                {
-                    Process.Start("https://www.yuque.com/ffcafe/act/dx11");
-                    return false;
-                }
+                MessageBox.Show("DriectX 11에서만 지원합니다.", windowsTitle);
+                return false;
             }
             if (IsZombieProcess(pid)) {
                 return false;
@@ -581,7 +570,7 @@ namespace Dalamud.Updater
             Log.Information($"[Updater] dalamudUpdater.State:{dalamudUpdater.State}");
             if (dalamudUpdater.State == DalamudUpdater.DownloadState.NoIntegrity)
             {
-                if (MessageBox.Show("当前Dalamud版本可能与游戏不兼容,确定注入吗？", windowsTitle, MessageBoxButtons.YesNo) != DialogResult.Yes)
+                if (MessageBox.Show("현재 달라가브 버전이 게임과 호환되지 않을 수 있습니다. 그래도 적용하시겠습니까?", windowsTitle, MessageBoxButtons.YesNo) != DialogResult.Yes)
                 {
                     return false;
                 }
@@ -614,14 +603,14 @@ namespace Dalamud.Updater
                 }
                 else
                 {
-                    MessageBox.Show("未能解析游戏进程ID", "找不到游戏",
+                    MessageBox.Show("게임 프로세스를 찾지 못했습니다.", "달라가브 적용 실패",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
                 }
             }
             else
             {
-                MessageBox.Show("未选择游戏进程", "找不到游戏",
+                MessageBox.Show("선택된 게임 프로세스가 없습니다.", "달라가브 적용 실패",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
             }
