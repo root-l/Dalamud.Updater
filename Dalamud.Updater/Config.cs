@@ -51,7 +51,7 @@ namespace Dalamud.Updater
             deserialized ??= new Config() { 
                 AutoInject = false,
                 AutoStart = false,
-                InjectDelaySeconds = 0,
+                InjectDelaySeconds = 1,
                 SafeMode = false,
             };
             //Log.Information(JsonConvert.SerializeObject(deserialized), SerializerSettings);
