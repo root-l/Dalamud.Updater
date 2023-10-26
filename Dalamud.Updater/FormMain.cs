@@ -47,23 +47,9 @@ namespace Dalamud.Updater
 
         public string windowsTitle = "獭纪委 v" + Assembly.GetExecutingAssembly().GetName().Version;
 
-        private int checkTimes = 0;
-
         private void CheckUpdate()
         {
-            checkTimes++;
-            if (checkTimes == 8)
-            {
-                MessageBox.Show("点这么多遍干啥？", windowsTitle);
-            }
-            else if (checkTimes == 9)
-            {
-                MessageBox.Show("还点？", windowsTitle);
-            }
-            else if (checkTimes > 10)
-            {
-                MessageBox.Show("有问题你发日志，别搁这瞎几把点了", windowsTitle);
-            }
+
             dalamudUpdater.Run();
         }
 
