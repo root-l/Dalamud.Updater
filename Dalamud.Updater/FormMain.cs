@@ -258,31 +258,35 @@ namespace Dalamud.Updater
                             {
                                 // Running on the UI thread
                                 comboBoxFFXIV.Items.Clear();
-                                comboBoxFFXIV.Items.AddRange(newPidList);
-                                if (newPidList.Length > 0)
+                                comboBoxFFXIV.Items.AddRange(newPidList.Cast<object>().ToArray());
+                                if (!comboBoxFFXIV.DroppedDown && comboBoxFFXIV.Items.Count > 0)
                                 {
-                                    if (!comboBoxFFXIV.DroppedDown)
-                                        this.comboBoxFFXIV.SelectedIndex = 0;
-                                    if (this.checkBoxAutoInject.Checked)
-                                    {
-                                        foreach (var pidStr in newPidList)
-                                        {
-                                            //Thread.Sleep((int)(this.injectDelaySeconds * 1000));
-                                            var pid = int.Parse(pidStr);
-                                            if (Process.GetProcessById(pid).ProcessName != "ffxiv_dx11")
-                                            {
-                                                this.DalamudUpdaterIcon.ShowBalloonTip(2000, "找不到游戏", $"进程{pid}不是dx11版FF。", ToolTipIcon.Warning);
-                                                Log.Information("{pid} is not dx11", pid);
-                                                continue;
-                                            }
-                                            if (this.Inject(pid, (int)(this.config.InjectDelaySeconds * 1000)))
-                                            {
-                                                this.DalamudUpdaterIcon.ShowBalloonTip(2000, "帮你注入了", $"帮你注入了进程{pid}，不用谢。", ToolTipIcon.Info);
-                                            }
-                                        }
-                                    }
+                                    this.comboBoxFFXIV.SelectedIndex = 0;
                                 }
                             });
+
+                            if (newPidList.Length > 0 &&this.checkBoxAutoInject.Checked)
+                            {
+                                while (dalamudUpdater.State != DalamudUpdater.DownloadState.Done)
+                                {
+                                    Thread.Sleep(1000);
+                                }
+
+                                foreach (var pidStr in newPidList)
+                                {
+                                    var pid = int.Parse(pidStr);
+                                    if (Process.GetProcessById(pid).ProcessName != "ffxiv_dx11")
+                                    {
+                                        this.DalamudUpdaterIcon.ShowBalloonTip(2000, "找不到游戏", $"进程{pid}不是dx11版FF。", ToolTipIcon.Warning); 
+                                        Log.Information("{pid} is not dx11", pid);
+                                        continue;
+                                    }
+                                    if (this.Inject(pid, (int)(this.config.InjectDelaySeconds * 1000)))
+                                    {
+                                        this.DalamudUpdaterIcon.ShowBalloonTip(2000, "帮你注入了", $"帮你注入了进程{pid}，不用谢。", ToolTipIcon.Info);
+                                    }
+                                }
+                            }
                         }
                     }
                     catch
